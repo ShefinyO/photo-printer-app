@@ -1,5 +1,5 @@
 'use client'
-import { JSX, useCallback } from "react";
+import { JSX, useCallback, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Plus} from "lucide-react";
 import Order from "./order";
@@ -15,7 +15,6 @@ export default function Preview(): JSX.Element{
   const memoizedHandleSelector = useCallback((value:string)=>{
     handleSelector(value)
   }, [])
-
 
   return(
     <>

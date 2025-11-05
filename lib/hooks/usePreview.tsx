@@ -1,6 +1,6 @@
 'use client'
 
-import {useRef, useState} from "react";
+import {useRef, useState, useEffect} from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { paymentAction } from "@/app/actions/paymentActions";
@@ -52,15 +52,7 @@ export default function usePreview(){
     startTransition(()=>{
 
       paymentAction(formData, allFiles)
-    })
-
-    await new Promise((resolve)=>{
-
-      setTimeout(()=>{
-      setStartPayment(false)
-      resolve
-      },8000)
-
+      
     })
 
   }
@@ -141,6 +133,15 @@ export default function usePreview(){
     }
     uploadFileInput.current?.click()
   }
+
+  useEffect(() => {
+    if (!isPending && startPayment) {
+    
+      const t = setTimeout(() => setStartPayment(false), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [isPending, startPayment]);
+
 
   const allPhotoComponents = allPhotos.map((photo: Photo, i)=>{
 
