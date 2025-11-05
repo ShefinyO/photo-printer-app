@@ -1,3 +1,37 @@
+Photo Printer app is a responsive web application that allows users to easily upload, preview, and manage their photos for printing. Built with Next.js (App Router) and Tailwind CSS, it provides a smooth, interactive experience that mimics real-world photo order workflows.
+
+🚀 Features:
+
+- 🖼️ Upload and preview photos before placing an order
+
+- 📏 Choose print sizes (e.g., 4x6, 5x7, 8x10) from an intuitive dropdown
+
+- 💳 Order form integration — users can input details such as name, address, and phone number
+
+- 🗑️ Photo management — ability to delete photos before submission
+
+- 🌐 Responsive design for seamless use across mobile, tablet, and desktop
+
+- ☁️ S3 integration (ready) — all server-side routes and actions are configured for uploading, downloading, and deleting images from an AWS S3 bucket
+
+- 🧩 Scalable architecture — uses server actions, API routes, and React hooks for modular functionality
+
+-   Fake payment button (Simulation using setTimeout)
+
+⚙️ How It Works
+
+- User uploads photos — images are stored in memory and will be uploaded to s3 bucket in future.
+  
+- Presigned S3 URLs are requested from the API route (/api/getPresignedURL).(routes and server functions are ready, integration pending..)
+  
+- Images are uploaded directly to S3 using these URLs.(routes and server functions are ready, integration pending..)
+  
+- User fills the order form — name, address, print size, etc
+  
+- Preview section dynamically displays all uploaded photos
+  
+- Order submission triggers the form action that will (in the future) process payment and finalize uploads. For now, only payment simulation is implemented
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
