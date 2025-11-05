@@ -6,6 +6,10 @@ Photo Printer app is a responsive web application that allows users to easily up
 
 - 📏 Choose print sizes (e.g., 4x6, 5x7, 8x10) from an intuitive dropdown
 
+-  Automatic Price calculation based on the page size and displays Order summary.
+
+-  Maximum of 5 photo uploads.
+
 - 💳 Order form integration — users can input details such as name, address, and phone number
 
 - 🗑️ Photo management — ability to delete photos before submission
