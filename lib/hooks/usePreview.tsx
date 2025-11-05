@@ -9,6 +9,7 @@ export type Photo = {
   name: string
   src: string
   size: string | null
+  file: File
 }
 
 
@@ -48,7 +49,8 @@ export default function usePreview(){
     const photo: Photo = {
       name: fileName!,
       src: imageUrl,
-      size: selectedSize
+      size: selectedSize,
+      file: file
     }
 
     setAllPhotos(prev => [photo, ...prev])
