@@ -27,13 +27,24 @@ export default function usePreview(){
 
   const [isPending, startTransition] = useTransition()
 
+  const [formNotCompletelyFilled, setFormNotCompletelyFilled] = useState<boolean>(false)
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault()
-    setStartPayment(true)
 
     const formData = new FormData(e.currentTarget)
     
     const allFiles = allPhotos.map(photo => photo.file)
+
+    const {fullName, emirate, address, phoneNumber} = Object.fromEntries(formData)
+    
+    if(!fullName || !emirate || !address || !phoneNumber || allPhotos.length === 0){
+      setFormNotCompletelyFilled(true)
+      return
+    }
+
+    setStartPayment(true)
+    setFormNotCompletelyFilled(false)
 
     startTransition(()=>{
 
@@ -140,6 +151,6 @@ export default function usePreview(){
   })
 
   return {handlePhotoUpload, handleSelector, allPhotoComponents, 
-    allPhotos, clickUploadButton, deletePhoto, uploadFileInput, isPending, handleSubmit, startPayment}
+    allPhotos, clickUploadButton, deletePhoto, uploadFileInput, isPending, handleSubmit, startPayment, formNotCompletelyFilled}
 
 }

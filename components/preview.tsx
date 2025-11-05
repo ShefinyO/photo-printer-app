@@ -10,7 +10,7 @@ import SizeSelector from "./sizeSelector";
 export default function Preview(): JSX.Element{
 
   const {handlePhotoUpload, handleSelector, allPhotoComponents, allPhotos, 
-    clickUploadButton, uploadFileInput, isPending, startPayment, handleSubmit} = usePreview()
+    clickUploadButton, uploadFileInput, isPending, startPayment, handleSubmit, formNotCompletelyFilled} = usePreview()
 
   const memoizedHandleSelector = useCallback((value:string)=>{
     handleSelector(value)
@@ -64,8 +64,9 @@ export default function Preview(): JSX.Element{
           <div className="block sm:hidden w-full px-5">
             {allPhotos.length !== 0 ? <Order uploadedPhotos={allPhotos}/> : null}
           </div>
-          <div className="px-5 w-full sm:w-auto mt-5 sm:mt-0">
-            <Button disabled={startPayment?true:false} type="submit" className="px-6 py-3 w-full sm:w-auto">
+          <div className="px-5 pb-5 sm:pb-0 w-full sm:w-auto mt-5 sm:mt-0">
+            {formNotCompletelyFilled ? <p className="text-red-700 text-sm sm:text-md mb-2">Please fill all the fields!!</p> : null}
+            <Button disabled={startPayment?true:false} type="submit" className="px-6 py-3 w-full sm:w-auto sm:mr-auto">
               {startPayment ? (isPending? 'Payment Processing....':'Payment Completed'):'Pay'}</Button>
           </div>
         </div>
