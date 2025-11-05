@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { paymentAction } from "@/app/actions/paymentActions";
 import { useTransition } from "react";
+import { resolve } from "path";
 
 
 export type Photo = {
@@ -27,9 +28,11 @@ export default function usePreview(){
 
   const [isPending, startTransition] = useTransition()
 
+  const [loading, setLoading] = useState<boolean>(false)
+
   const [formNotCompletelyFilled, setFormNotCompletelyFilled] = useState<boolean>(false)
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) =>{
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault()
 
     const formData = new FormData(e.currentTarget)
@@ -51,9 +54,14 @@ export default function usePreview(){
       paymentAction(formData, allFiles)
     })
 
-    setTimeout(()=>{
+    await new Promise((resolve)=>{
+
+      setTimeout(()=>{
       setStartPayment(false)
-    },4000)
+      resolve
+      },4000)
+
+    })
 
   }
 
@@ -145,7 +153,9 @@ export default function usePreview(){
           <p className="py-0.5 border-2 border-black text-center text-xs font-medium text-gray-700 sm:text-sm">Size: {photo.size}</p>
           <p className="py-0.5 pb-1 border-x-2 border-b-2 border-b-black border-x-black text-center text-sm bg-gray-800 text-white">{photo.name}</p>
         </div>
-        <Button onClick={()=>deletePhoto(i)} variant="outline" size="icon" className="rounded-full absolute top-0 right-0 hover:cursor-pointer"><X color='red'/></Button>
+        <Button onClick={(e)=>{
+          e.stopPropagation()
+          deletePhoto(i)}} variant="outline" size="icon" className="rounded-full absolute top-0 right-0 hover:cursor-pointer"><X color='red'/></Button>
       </div>
     )
   })

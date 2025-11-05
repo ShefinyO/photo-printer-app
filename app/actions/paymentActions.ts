@@ -3,7 +3,7 @@
 
 export const paymentAction = async (formData: FormData, allPhotos: File[]):Promise<boolean> =>{
 
-  await new Promise(resolve => setTimeout(resolve, 3000))
+  await new Promise(resolve => setTimeout(resolve, 2000))
   console.log('formData is here', formData)
 
   return true
