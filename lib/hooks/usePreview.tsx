@@ -3,6 +3,8 @@
 import {useRef, useState} from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { paymentAction } from "@/app/actions/paymentActions";
+import { useTransition } from "react";
 
 
 export type Photo = {
@@ -21,6 +23,29 @@ export default function usePreview(){
 
   const uploadFileInput = useRef<HTMLInputElement>(null)
 
+  const [startPayment, setStartPayment] = useState<boolean>(false)
+
+  const [isPending, startTransition] = useTransition()
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) =>{
+    e.preventDefault()
+    setStartPayment(true)
+
+    const formData = new FormData(e.currentTarget)
+    
+    const allFiles = allPhotos.map(photo => photo.file)
+
+    startTransition(()=>{
+
+      paymentAction(formData, allFiles)
+    })
+
+    setTimeout(()=>{
+      setStartPayment(false)
+    },4000)
+
+  }
+
   const handleSelector = (value:string) =>{
     console.log(value)
     setSelectedSize(value)
@@ -29,22 +54,55 @@ export default function usePreview(){
 
   const deletePhoto = (id: number) =>{
     const newSetOfPhotos = allPhotos.filter((photo:Photo,i:number) => id !== i)
+    
 
     setAllPhotos(newSetOfPhotos)
   }
 
   console.log(selectedSize)
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async(e: React.ChangeEvent<HTMLInputElement>) => {
 
     console.log('object',e.target.files?.[0])
     const file = e.target.files?.[0]
+
+    console.log('fileInfo', file)
     
     if(!file) return
     const imageUrl = URL.createObjectURL(file)
     const nameArray = file?.name.split('')
     
     const fileName = nameArray!.length > 10 ? `${nameArray?.slice(0,11).join('')}.jpg` : file?.name
+
+    /*  {S3 upload code}
+    try{
+
+      const res = await fetch('/api/getPresignedURL',{
+        method: 'POST',
+        body: JSON.stringify({
+          fileName: file.name,
+          contentType: file.type,
+          urlType: 'put'
+        })
+      })
+      const data = await res.json()
+      if(!res.ok){
+        throw new Error(data.error)
+      }
+
+      const {url} = data
+
+      const uploadRes = await fetch(url, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type },
+      });
+
+      if(!uploadRes.ok) throw new Error("Upload failed")
+
+    }catch(err){
+      console.log(err instanceof Error ? err.message : "Something went wrong")
+    }*/
 
     const photo: Photo = {
       name: fileName!,
@@ -81,6 +139,7 @@ export default function usePreview(){
     )
   })
 
-  return {handlePhotoUpload, handleSelector, allPhotoComponents, allPhotos, clickUploadButton, deletePhoto, uploadFileInput}
+  return {handlePhotoUpload, handleSelector, allPhotoComponents, 
+    allPhotos, clickUploadButton, deletePhoto, uploadFileInput, isPending, handleSubmit, startPayment}
 
 }

@@ -1,49 +1,21 @@
 'use client'
-import { JSX, useActionState, useTransition} from "react";
+import { JSX, useCallback } from "react";
 import { Button } from "./ui/button";
 import { Plus} from "lucide-react";
-import { Form } from "./ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import Order from "./order";
 import { Input } from "./ui/input";
 import usePreview from "@/lib/hooks/usePreview";
-import { paymentAction } from "@/app/actions/paymentActions";
-import { useState } from "react";
+import SizeSelector from "./sizeSelector";
 
 export default function Preview(): JSX.Element{
 
   const {handlePhotoUpload, handleSelector, allPhotoComponents, allPhotos, 
-    clickUploadButton, deletePhoto, uploadFileInput} = usePreview()
+    clickUploadButton, uploadFileInput, isPending, startPayment, handleSubmit} = usePreview()
 
-  const [isPending, startTransition] = useTransition()
+  const memoizedHandleSelector = useCallback((value:string)=>{
+    handleSelector(value)
+  }, [])
 
-  const [startPayment, setStartPayment] = useState<boolean>(false)
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) =>{
-    e.preventDefault()
-    setStartPayment(true)
-
-    const formData = new FormData(e.currentTarget)
-    
-    const allFiles = allPhotos.map(photo => photo.file)
-
-    startTransition(()=>{
-      paymentAction(formData, allFiles)
-    })
-
-    setTimeout(()=>{
-      setStartPayment(false)
-    },4000)
-
-  }
 
   return(
     <>
@@ -82,32 +54,19 @@ export default function Preview(): JSX.Element{
         <div className="flex flex-col sm:items-center justify-between sm:flex-row items-start">
           <div className="w-full sm:w-auto">
             <div className="px-5 pt-3">
-              <Button type="button" onClick={clickUploadButton} 
-              className="text-xs w-full sm:w-auto sm:text-sm">Upload Photo <Plus className="mr-2"/></Button>
+              <Button disabled={allPhotos.length < 5 ? false:true} type="button" onClick={clickUploadButton} 
+              className="text-xs w-full sm:w-auto sm:text-sm">
+                {allPhotos.length < 5 ? 'Upload Photo': 'Max Uploads 5'}{allPhotos.length < 5 && <Plus className="mr-2"/>}</Button>
               <Input multiple name="photoFiles" onChange={handlePhotoUpload} className="hidden" ref={uploadFileInput} id="upload_file" type="file" accept="image/*"/>
             </div>
-            <div className="px-5 mt-5 sm:mt-0">
-              <Select onValueChange={handleSelector}>
-                <SelectTrigger className="w-full sm:w-[180px] mt-3 sm:mt-4">
-                  <SelectValue placeholder="Select a Print Size" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Available Print Sizes</SelectLabel>
-                    <SelectItem value="4x6">4x6</SelectItem>
-                    <SelectItem value="5x7">5x7</SelectItem>
-                    <SelectItem value="8x10">8x10</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+            <SizeSelector handleSelector={memoizedHandleSelector}/>
           </div>
           <div className="block sm:hidden w-full px-5">
             {allPhotos.length !== 0 ? <Order uploadedPhotos={allPhotos}/> : null}
           </div>
           <div className="px-5 w-full sm:w-auto mt-5 sm:mt-0">
-            <Button type="submit" className="px-6 py-3 w-full sm:w-auto">
-              {startPayment ? (isPending? 'payment processing....':'payment completed'):'pay'}</Button>
+            <Button disabled={startPayment?true:false} type="submit" className="px-6 py-3 w-full sm:w-auto">
+              {startPayment ? (isPending? 'Payment Processing....':'Payment Completed'):'Pay'}</Button>
           </div>
         </div>
       </form>
