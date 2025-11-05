@@ -59,7 +59,7 @@ export default function usePreview(){
       setTimeout(()=>{
       setStartPayment(false)
       resolve
-      },4000)
+      },8000)
 
     })
 
