@@ -10,6 +10,8 @@ Photo Printer app is a responsive web application that allows users to easily up
 
 -  Maximum of 5 photo uploads.
 
+-  Horizontal scroller for Photo Preview.
+
 - 💳 Order form integration — users can input details such as name, address, and phone number
 
 - 🗑️ Photo management — ability to delete photos before submission
